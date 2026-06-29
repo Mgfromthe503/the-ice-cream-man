@@ -1,5 +1,5 @@
 import "@/global.css";
-import { QueryClientProvider } from "@tanstack/react-query";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Stack, useRouter, useSegments } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { useCallback, useEffect, useMemo, useState } from "react";
@@ -11,8 +11,6 @@ import { ThemeProvider } from "@/lib/theme-provider";
 import { AuthProvider, useAuth } from "@/lib/auth-context";
 import { LocationProvider } from "@/lib/location-context";
 import { RequestProvider } from "@/lib/request-context";
-import { useAppStore, selectUserRole, selectIsAppReady } from "@/lib/store";
-import { createQueryClient } from "@/lib/query-config";
 import {
   SafeAreaFrameContext,
   SafeAreaInsetsContext,
@@ -32,52 +30,29 @@ export const unstable_settings = {
   anchor: "(tabs)",
 };
 
-/**
- * Protected Routing with Auth State Evaluation
- * 
- * On launch, the app evaluates the user's persisted state (from Zustand store)
- * and redirects them cleanly:
- * - No role → role-select screen
- * - Customer role → customer dashboard
- * - Driver role → driver dashboard (with registration/payment gate)
- * - OAuth callback → handled separately
- * 
- * This prevents flash of wrong content and ensures clean navigation.
- */
 function RootLayoutNav() {
   const { userRole, isLoading } = useAuth();
-  const storeRole = useAppStore(selectUserRole);
-  const setAppReady = useAppStore((s) => s.setAppReady);
   const segments = useSegments();
   const router = useRouter();
-
-  // Mark app as ready once store is hydrated and auth is resolved
-  useEffect(() => {
-    if (!isLoading) {
-      setAppReady(true);
-    }
-  }, [isLoading, setAppReady]);
 
   useEffect(() => {
     if (isLoading) return;
 
-    // Use the effective role (auth context takes priority, fallback to store)
-    const effectiveRole = userRole || storeRole;
     const inAuthGroup = segments[0] === "(customer)" || segments[0] === "(driver)";
 
-    if (!effectiveRole && inAuthGroup) {
+    if (!userRole && inAuthGroup) {
       router.replace("/role-select");
-    } else if (!effectiveRole && segments[0] === "(tabs)") {
+    } else if (!userRole && segments[0] === "(tabs)") {
       // First app open — show role selection (no login required)
       router.replace("/role-select");
-    } else if (effectiveRole && !inAuthGroup && segments[0] !== "oauth" && segments[0] !== "login") {
-      if (effectiveRole === "customer") {
+    } else if (userRole && !inAuthGroup && segments[0] !== "oauth") {
+      if (userRole === "customer") {
         router.replace("/(customer)");
-      } else if (effectiveRole === "driver") {
+      } else if (userRole === "driver") {
         router.replace("/(driver)");
       }
     }
-  }, [userRole, storeRole, segments, isLoading]);
+  }, [userRole, segments, isLoading]);
 
   return (
     <>
@@ -89,6 +64,7 @@ function RootLayoutNav() {
         <Stack.Screen name="(driver)" />
         <Stack.Screen name="oauth/callback" />
       </Stack>
+
     </>
   );
 }
@@ -116,10 +92,20 @@ export default function RootLayout() {
     return () => unsubscribe();
   }, [handleSafeAreaUpdate]);
 
-  // Create optimized query client once — uses production config from query-config.ts
-  // Separates server data (TanStack Query) from local UI state (Zustand)
-  // This ensures UI stays responsive during heavy API calls
-  const [queryClient] = useState(() => createQueryClient());
+  // Create clients once and reuse them
+  const [queryClient] = useState(
+    () =>
+      new QueryClient({
+        defaultOptions: {
+          queries: {
+            // Disable automatic refetching on window focus for mobile
+            refetchOnWindowFocus: false,
+            // Retry failed requests once
+            retry: 1,
+          },
+        },
+      }),
+  );
   const [trpcClient] = useState(() => createTRPCClient());
 
   // Ensure minimum 8px padding for top and bottom on mobile
