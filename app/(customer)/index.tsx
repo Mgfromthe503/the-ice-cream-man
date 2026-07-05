@@ -1,4 +1,4 @@
-import { View, Text, Pressable, ScrollView, Alert, Animated, Easing, Modal, TextInput, TouchableOpacity } from 'react-native';
+import { View, Text, Pressable, ScrollView, Alert, Animated, Easing, Modal, TextInput } from 'react-native';
 import { ScreenContainer } from '@/components/screen-container';
 import { useColors } from '@/hooks/use-colors';
 import { useState, useEffect, useRef } from 'react';
@@ -487,69 +487,91 @@ export default function CustomerHomeScreen() {
         animationType="slide"
         onRequestClose={() => setShowDeliveryOptions(false)}
       >
-        <View style={{ flex: 1, justifyContent: 'flex-end', backgroundColor: 'rgba(0,0,0,0.5)' }}>
-          <View className="bg-background rounded-t-3xl p-6" style={{ maxHeight: '80%' }}>
+        <Pressable
+          onPress={() => setShowDeliveryOptions(false)}
+          style={{ flex: 1, justifyContent: 'flex-end', backgroundColor: 'rgba(0,0,0,0.5)' }}
+        >
+          <Pressable onPress={() => {}} style={{ maxHeight: '80%', backgroundColor: colors.background, borderTopLeftRadius: 24, borderTopRightRadius: 24, padding: 24 }}>
             <Text className="text-xl font-bold text-foreground text-center mb-1">Delivery Details</Text>
             <Text className="text-sm text-muted text-center mb-5">How should the driver find you?</Text>
 
             {/* Share Mode Options */}
-            <View className="gap-3 mb-5">
-              <TouchableOpacity
-                onPress={() => setShareMode('exact')}
-                className={`p-4 rounded-xl border ${shareMode === 'exact' ? 'border-primary bg-primary/10' : 'border-border bg-surface'}`}
-              >
-                <Text className="text-base font-bold text-foreground">📍 Share My Exact Address</Text>
-                <Text className="text-xs text-muted mt-1">Driver gets your full address for door-to-door delivery</Text>
-              </TouchableOpacity>
+            <ScrollView style={{ maxHeight: 300 }} showsVerticalScrollIndicator={false}>
+              <View style={{ gap: 12, marginBottom: 20 }}>
+                <Pressable
+                  onPress={() => { setShareMode('exact'); Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); }}
+                  style={({ pressed }) => [{
+                    padding: 16, borderRadius: 12, borderWidth: 1.5,
+                    borderColor: shareMode === 'exact' ? colors.primary : colors.border,
+                    backgroundColor: shareMode === 'exact' ? colors.primary + '15' : colors.surface,
+                    opacity: pressed ? 0.7 : 1,
+                  }]}
+                >
+                  <Text className="text-base font-bold text-foreground">📍 Share My Exact Address</Text>
+                  <Text className="text-xs text-muted" style={{ marginTop: 4 }}>Driver gets your full address for door-to-door delivery</Text>
+                </Pressable>
 
-              <TouchableOpacity
-                onPress={() => setShareMode('street')}
-                className={`p-4 rounded-xl border ${shareMode === 'street' ? 'border-primary bg-primary/10' : 'border-border bg-surface'}`}
-              >
-                <Text className="text-base font-bold text-foreground">🛣️ Street Name Only</Text>
-                <Text className="text-xs text-muted mt-1">Driver drives down your street — listen for the jingle!</Text>
-              </TouchableOpacity>
+                <Pressable
+                  onPress={() => { setShareMode('street'); Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); }}
+                  style={({ pressed }) => [{
+                    padding: 16, borderRadius: 12, borderWidth: 1.5,
+                    borderColor: shareMode === 'street' ? colors.primary : colors.border,
+                    backgroundColor: shareMode === 'street' ? colors.primary + '15' : colors.surface,
+                    opacity: pressed ? 0.7 : 1,
+                  }]}
+                >
+                  <Text className="text-base font-bold text-foreground">🛣️ Street Name Only</Text>
+                  <Text className="text-xs text-muted" style={{ marginTop: 4 }}>Driver drives down your street — listen for the jingle!</Text>
+                </Pressable>
 
-              <TouchableOpacity
-                onPress={() => setShareMode('meetup')}
-                className={`p-4 rounded-xl border ${shareMode === 'meetup' ? 'border-primary bg-primary/10' : 'border-border bg-surface'}`}
-              >
-                <Text className="text-base font-bold text-foreground">🤝 Meet at a Spot</Text>
-                <Text className="text-xs text-muted mt-1">Pick a meetup point (stop sign, school, park, etc.)</Text>
-              </TouchableOpacity>
-            </View>
+                <Pressable
+                  onPress={() => { setShareMode('meetup'); Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); }}
+                  style={({ pressed }) => [{
+                    padding: 16, borderRadius: 12, borderWidth: 1.5,
+                    borderColor: shareMode === 'meetup' ? colors.primary : colors.border,
+                    backgroundColor: shareMode === 'meetup' ? colors.primary + '15' : colors.surface,
+                    opacity: pressed ? 0.7 : 1,
+                  }]}
+                >
+                  <Text className="text-base font-bold text-foreground">🤝 Meet at a Spot</Text>
+                  <Text className="text-xs text-muted" style={{ marginTop: 4 }}>Pick a meetup point (stop sign, school, park, etc.)</Text>
+                </Pressable>
+              </View>
 
-            {/* Special Instructions */}
-            <Text className="text-sm font-semibold text-foreground mb-2">Special Instructions (optional)</Text>
-            <TextInput
-              value={deliveryInstructions}
-              onChangeText={setDeliveryInstructions}
-              placeholder={shareMode === 'meetup' ? 'e.g. Meet at the stop sign on Oak St' : 'e.g. Blue house, extra sprinkles please!'}
-              placeholderTextColor="#999"
-              multiline
-              numberOfLines={2}
-              returnKeyType="done"
-              className="bg-surface border border-border rounded-xl p-4 text-foreground text-sm mb-5"
-              style={{ minHeight: 60, textAlignVertical: 'top' }}
-            />
+              {/* Special Instructions */}
+              <Text className="text-sm font-semibold text-foreground" style={{ marginBottom: 8 }}>Special Instructions (optional)</Text>
+              <TextInput
+                value={deliveryInstructions}
+                onChangeText={setDeliveryInstructions}
+                placeholder={shareMode === 'meetup' ? 'e.g. Meet at the stop sign on Oak St' : 'e.g. Blue house, extra sprinkles please!'}
+                placeholderTextColor="#999"
+                multiline
+                numberOfLines={2}
+                returnKeyType="done"
+                style={{ minHeight: 60, textAlignVertical: 'top', backgroundColor: colors.surface, borderColor: colors.border, borderWidth: 1, borderRadius: 12, padding: 16, color: colors.foreground, fontSize: 14, marginBottom: 20 }}
+              />
+            </ScrollView>
 
             {/* Confirm Button */}
-            <TouchableOpacity
+            <Pressable
               onPress={handleConfirmOrder}
-              className="bg-primary rounded-xl p-4 mb-3"
+              style={({ pressed }) => [{
+                backgroundColor: colors.primary, borderRadius: 12, padding: 16, marginBottom: 12,
+                opacity: pressed ? 0.8 : 1, transform: [{ scale: pressed ? 0.97 : 1 }],
+              }]}
             >
-              <Text className="text-white font-bold text-center text-lg">🍦 Send My Order!</Text>
-            </TouchableOpacity>
+              <Text style={{ color: 'white', fontWeight: 'bold', textAlign: 'center', fontSize: 18 }}>🍦 Send My Order!</Text>
+            </Pressable>
 
             {/* Cancel */}
-            <TouchableOpacity
+            <Pressable
               onPress={() => setShowDeliveryOptions(false)}
-              className="p-3"
+              style={({ pressed }) => [{ padding: 12, opacity: pressed ? 0.6 : 1 }]}
             >
               <Text className="text-muted font-medium text-center">Cancel</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
+            </Pressable>
+          </Pressable>
+        </Pressable>
       </Modal>
     </ScreenContainer>
   );
