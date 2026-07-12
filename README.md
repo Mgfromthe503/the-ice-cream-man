@@ -160,3 +160,34 @@ Portland, OR
 ## 📜 License
 
 All rights reserved. This is proprietary software.
+
+---
+
+## MERGE: Monorepo preparation notes
+This branch prepares this repository to become the merged monorepo root. Summary of changes made on branch `mgfromthe503-merge-prepare-monorepo`:
+
+- Move app package into `app/` (created `app/package.json` with the app's dependencies and scripts).
+- Introduce a workspace-aware root `package.json` with workspaces: `["app","packages/*"]`.
+- Create `packages/` (placeholder) for shared libraries and future packages.
+- Append this migration checklist and instructions.
+
+Migration checklist to finish merge with `ice-cream-man-app` repo:
+
+1. From the `ice-cream-man-app` repository, copy the following into this repo:
+   - `app/` (entire application source) -> place under this repo's `app/` folder.
+   - `assets/`, `legal/`, any app-specific `scripts/` and `server/` folders (if app has its own server) -> place under `app/` or `packages/` depending on desired separation.
+   - Any CI config that is app-specific (move to `.github/workflows/` and update paths as needed).
+2. If the app has its own package.json, prefer merging dependencies into `app/package.json`; remove duplicate root-level fields.
+3. Run locally:
+   - pnpm install
+   - pnpm dev
+   - If using Expo, run `pnpm --filter app dev` (root `dev` runs this for convenience).
+4. Verify tests: `pnpm -w -r test`.
+5. Adjust CI so workflows run workspace-aware commands (use `pnpm install` then `pnpm --filter app test`).
+
+Notes / Known manual steps:
+- If the other repo uses a different Node engine or pnpm version, reconcile `packageManager` in the root package.json.
+- Some relative imports/configs that assumed project root may need path updates after being inside `app/`.
+
+If you'd like, proceed to copy the other repo's files into `app/` and I will update paths and CI in this branch.
+
