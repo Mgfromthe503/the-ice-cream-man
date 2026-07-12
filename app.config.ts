@@ -137,6 +137,12 @@ const config: ExpoConfig = {
         android: {
           buildArchs: ["armeabi-v7a", "arm64-v8a"],
           minSdkVersion: 24,
+          enableProguard: true,
+          extraGradleProperties: [
+            "android.useAndroidX=true",
+            "android.enableJetifier=true",
+            "org.gradle.jvmargs=-Xmx2048m"
+          ]
         },
       },
     ],
