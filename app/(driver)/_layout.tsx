@@ -74,12 +74,6 @@ export default function DriverTabLayout() {
           href: null, // Hidden from tab bar, accessed via navigation
         }}
       />
-      <Tabs.Screen
-        name="terms"
-        options={{
-          href: null, // Hidden from tab bar, accessed via payment screen
-        }}
-      />
     </Tabs>
   );
 }

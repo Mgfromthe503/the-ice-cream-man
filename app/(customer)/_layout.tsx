@@ -69,14 +69,6 @@ export default function CustomerTabLayout() {
           tabBarIcon: ({ color }) => <IconSymbol size={28} name="person.fill" color={color} />,
         }}
       />
-      <Tabs.Screen
-        name="notifications"
-        options={{ href: null }}
-      />
-      <Tabs.Screen
-        name="location-settings"
-        options={{ href: null }}
-      />
     </Tabs>
     </View>
   );
