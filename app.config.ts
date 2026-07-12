@@ -141,9 +141,16 @@ const config: ExpoConfig = {
           extraGradleProperties: [
             "android.useAndroidX=true",
             "android.enableJetifier=true",
-            "org.gradle.jvmargs=-Xmx2048m"
+            "org.gradle.jvmargs=-Xmx2048m",
+            "android.enableR8=true",
+            "android.enableR8.fullMode=false"
+          ],
+          extraBuildGradle: [
+            "dependencies {",
+            "  implementation 'com.android.billingclient:billing:6.0.1'",
+            "}"
           ]
-        },
+        }
       },
     ],
   ],
