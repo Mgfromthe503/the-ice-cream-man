@@ -1,8 +1,7 @@
 {
   "cli": {
     "version": ">= 5.0.0",
-    "promptToConfigurePushNotifications": false,
-    "packageManager": "npm"
+    "promptToConfigurePushNotifications": false
   },
   "build": {
     "development": {
@@ -17,10 +16,7 @@
     },
     "production": {
       "android": {
-        "buildType": "app-bundle",
-        "gradleCommand": ":app:bundleRelease",
-        "enableProguard": true,
-        "withoutCredentials": false
+        "buildType": "app-bundle"
       }
     }
   },
