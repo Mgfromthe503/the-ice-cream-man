@@ -41,7 +41,7 @@ const env = {
 const config: ExpoConfig = {
   name: env.appName,
   slug: env.appSlug,
-  version: "1.0.0",
+  version: "1.0.14",
   orientation: "portrait",
   icon: "./assets/images/icon.png",
   scheme: env.scheme,
@@ -147,7 +147,16 @@ const config: ExpoConfig = {
           ],
           extraBuildGradle: [
             "dependencies {",
-            "  implementation 'com.android.billingclient:billing:6.0.1'",
+            "  implementation 'com.android.billingclient:billing:9.1.0'",
+            "}",
+            "android {",
+            "  buildTypes {",
+            "    release {",
+            "      minifyEnabled true",
+            "      shrinkResources true",
+            "      proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'",
+            "    }",
+            "  }",
             "}"
           ]
         }
