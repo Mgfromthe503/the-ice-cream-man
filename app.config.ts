@@ -41,7 +41,7 @@ const env = {
 const config: ExpoConfig = {
   name: env.appName,
   slug: env.appSlug,
-  version: "1.0.17",
+  version: "1.0.19",
   orientation: "portrait",
   icon: "./assets/images/icon.png",
   scheme: env.scheme,
@@ -138,6 +138,7 @@ const config: ExpoConfig = {
           buildArchs: ["armeabi-v7a", "arm64-v8a"],
           minSdkVersion: 24,
           enableProguard: true,
+          extraBuildGradle: "dependencies {\n  implementation 'com.android.billingclient:billing:9.1.0'\n}",
           extraGradleProperties: [
             "android.useAndroidX=true",
             "android.enableJetifier=true",
@@ -145,7 +146,12 @@ const config: ExpoConfig = {
             "android.enableR8=true",
             "android.enableR8.fullMode=false"
           ],
-          // BillingClient 9.1.0 and R8 minification configured in eas.json and build.gradle.kts
+          modifyGradleProperties: (props) => {
+            props.set("android.enableR8", "true");
+            props.set("android.minifyEnabled", "true");
+            props.set("android.shrinkResources", "true");
+            return props;
+          },
         }
       },
     ],
