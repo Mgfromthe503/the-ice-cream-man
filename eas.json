@@ -20,7 +20,11 @@
         "buildType": "app-bundle",
         "gradleCommand": ":app:bundleRelease",
         "enableProguard": true,
-        "withoutCredentials": false
+        "withoutCredentials": false,
+        "env": {
+          "GRADLE_OPTS": "-Dorg.gradle.jvmargs='-Xmx2048m'"
+        },
+        "extraBuildGradle": "dependencies {\n  implementation 'com.android.billingclient:billing:9.1.0'\n}\n\nandroid {\n  buildTypes {\n    release {\n      minifyEnabled true\n      shrinkResources true\n      proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'\n    }\n  }\n}"
       }
     }
   },

@@ -145,20 +145,7 @@ const config: ExpoConfig = {
             "android.enableR8=true",
             "android.enableR8.fullMode=false"
           ],
-          extraBuildGradle: [
-            "dependencies {",
-            "  implementation 'com.android.billingclient:billing:9.1.0'",
-            "}",
-            "android {",
-            "  buildTypes {",
-            "    release {",
-            "      minifyEnabled true",
-            "      shrinkResources true",
-            "      proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'",
-            "    }",
-            "  }",
-            "}"
-          ]
+          // BillingClient 9.1.0 and R8 minification configured in eas.json and build.gradle.kts
         }
       },
     ],
