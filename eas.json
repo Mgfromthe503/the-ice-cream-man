@@ -24,7 +24,7 @@
         "env": {
           "GRADLE_OPTS": "-Dorg.gradle.jvmargs='-Xmx2048m'"
         },
-        "extraBuildGradle": "dependencies {\n  implementation 'com.android.billingclient:billing:9.1.0'\n}\n\nandroid {\n  buildTypes {\n    release {\n      minifyEnabled true\n      shrinkResources true\n      proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'\n    }\n  }\n}"
+        "extraBuildGradle": "dependencies {\n  implementation 'com.android.billingclient:billing:9.1.0'\n}\n\nandroid {\n  buildTypes {\n    release {\n      minifyEnabled true\n      shrinkResources true\n      proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'\n    }\n  }\n}\n\nafterbuild {\n  doLast {\n    def mappingFile = file('build/outputs/mapping/release/mapping.txt')\n    def bundleDir = file('build/outputs/bundle/release')\n    if (mappingFile.exists() && bundleDir.exists()) {\n      copy {\n        from mappingFile\n        into bundleDir\n        rename 'mapping.txt', 'mapping.txt'\n      }\n    }\n  }\n}\n\nbundleRelease.finalizedBy afterbuild"
       }
     }
   },
