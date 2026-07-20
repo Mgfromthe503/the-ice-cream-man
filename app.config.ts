@@ -19,6 +19,11 @@ const config: ExpoConfig = {
   scheme: DEEP_LINK_SCHEME,
   userInterfaceStyle: "automatic",
   newArchEnabled: true,
+  extra: {
+    eas: {
+      projectId: "a7392ba6-c4a2-455d-b03c-9bc0233b7b12",
+    },
+  },
   ios: {
     supportsTablet: true,
     bundleIdentifier: BUNDLE_ID,
