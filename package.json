@@ -11,5 +11,8 @@
     "test": "pnpm -w -r test",
     "lint": "pnpm -w -r lint",
     "format": "pnpm -w -r format"
+  },
+  "dependencies": {
+    "expo-insights": "~0.10.8"
   }
 }
