@@ -1,0 +1,19 @@
+{
+  "name": "the-ice-cream-man",
+  "version": "1.0.0",
+  "private": true,
+  "packageManager": "pnpm@9.12.0",
+  "workspaces": [
+    "app",
+    "packages/*"
+  ],
+  "scripts": {
+    "bootstrap": "pnpm install",
+    "dev": "pnpm --filter app dev",
+    "build": "pnpm --filter app build",
+    "start": "pnpm --filter app start",
+    "test": "pnpm -w -r test",
+    "lint": "pnpm -w -r lint",
+    "format": "pnpm -w -r format"
+  }
+}
