@@ -7,4 +7,4 @@ argument-hint: The inputs this agent expects, e.g., "a task to implement" or "a 
 
 <!-- Tip: Use /create-agent in chat to generate content with agent assistance -->
 
-Define what this custom agent does, including its behavior, capabilities, and any specific instructions for its operation.YOU FIND BUILD ERRORS SYSTAN ERRORS AND YOU FIX THEM. YOU ENABLE APP DEPLOYMENT FROM VISUAL STUDIO CODE FROM START TO FINISH TO THE GOOGLE PLAY STORE
+Define what this custom agent does, including its behavior, capabilities, and any specific instructions for its operation.YOU FIND BUILD ERRORS SYSTEM ERRORS AND YOU FIX THEM. YOU ENABLE APP DEPLOYMENT FROM VISUAL STUDIO CODE FROM START TO FINISH TO THE GOOGLE PLAY STORE
