@@ -43,9 +43,11 @@ google-service-account.json
 
 app-example
 
-# generated native folders
+# generated native folders — EAS Build regenerates these
 /ios
 /android
+/app/android
+/app/ios
 
 # IDE
 .vscode/
