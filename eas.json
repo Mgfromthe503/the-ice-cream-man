@@ -24,7 +24,7 @@
   "submit": {
     "production": {
       "android": {
-        "serviceAccountKeyPath": "/tmp/google-service-account.json",
+        "serviceAccountKeyPath": "./google-service-account.json",
         "track": "internal",
         "releaseStatus": "completed",
         "changesNotSentForReview": false
