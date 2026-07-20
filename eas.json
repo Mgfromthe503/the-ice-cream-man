@@ -1,6 +1,7 @@
 {
   "cli": {
     "version": ">= 5.0.0",
+    "appVersionSource": "local",
     "promptToConfigurePushNotifications": false
   },
   "build": {
@@ -15,7 +16,9 @@
     },
     "production": {
       "android": { "buildType": "app-bundle" },
-      "env": { "NODE_ENV": "production" }
+      "env": { "NODE_ENV": "production" },
+      "autoSubmit": true,
+      "autoSubmitProfile": "production"
     }
   },
   "submit": {
@@ -23,7 +26,7 @@
       "android": {
         "serviceAccountKeyPath": "/tmp/google-service-account.json",
         "track": "internal",
-        "releaseStatus": "draft",
+        "releaseStatus": "completed",
         "changesNotSentForReview": false
       }
     }
