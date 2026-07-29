@@ -1,31 +1,46 @@
 {
   "cli": {
-    "version": ">= 5.0.0",
+    "version": ">= 16.0.0",
     "appVersionSource": "local",
     "promptToConfigurePushNotifications": false
   },
   "build": {
+    "base": {
+      "node": "20.18.0",
+      "env": {
+        "EAS_BUILD_NO_EXPO_GO_WARNING": "1"
+      }
+    },
     "development": {
+      "extends": "base",
       "developmentClient": true,
       "distribution": "internal",
-      "android": { "buildType": "apk" }
+      "android": {
+        "buildType": "apk"
+      }
     },
     "preview": {
+      "extends": "base",
       "distribution": "internal",
-      "android": { "buildType": "apk" }
+      "android": {
+        "buildType": "apk"
+      }
     },
     "production": {
-      "android": { "buildType": "app-bundle" },
-      "env": { "NODE_ENV": "production" }
+      "extends": "base",
+      "android": {
+        "buildType": "app-bundle"
+      },
+      "env": {
+        "NODE_ENV": "production"
+      }
     }
   },
   "submit": {
     "production": {
       "android": {
-        "serviceAccountKeyPath": "./google-service-account.json",
         "track": "internal",
-        "releaseStatus": "completed",
-        "changesNotSentForReview": false
+        "releaseStatus": "draft"
       }
     }
   }

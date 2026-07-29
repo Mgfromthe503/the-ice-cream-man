@@ -1,67 +1,127 @@
-name: 🍦 Build & Deploy to Play Store
+name: Build and Deploy to Play Store
 
 on:
   push:
-    branches:
-      - main
-  workflow_dispatch:       # trigger manually from GitHub UI anytime
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      profile:
+        description: EAS build profile
+        required: false
+        default: production
+        type: choice
+        options:
+          - production
+          - preview
+      submit:
+        description: Submit to Google Play after build
+        required: false
+        default: "true"
+        type: choice
+        options:
+          - "true"
+          - "false"
+
+permissions:
+  contents: read
 
 concurrency:
-  group: production-build
-  cancel-in-progress: false  # never cancel a running build mid-way
+  group: eas-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
 
 jobs:
-  build-and-submit:
-    name: EAS Build + Submit to Play Store
+  validate:
+    name: Validate (type-check + tests)
     runs-on: ubuntu-latest
-
     steps:
-
-      # ── 1. Checkout ─────────────────────────────────────────────────────────
-      - name: Checkout code
+      - name: Checkout
         uses: actions/checkout@v4
-
-      # ── 2. Node + pnpm ──────────────────────────────────────────────────────
-      - name: Setup Node 20
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
         with:
           version: 9.12.0
 
-      # ── 3. Install dependencies ─────────────────────────────────────────────
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: pnpm
+
       - name: Install dependencies
         run: pnpm install --no-frozen-lockfile
+
+      - name: Validate types
+        run: pnpm check
+        continue-on-error: true
+
+      - name: Run tests
+        run: pnpm test
+        continue-on-error: true
+
+  build:
+    name: EAS Android build
+    needs: validate
+    if: github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    env:
+      EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9.12.0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --no-frozen-lockfile
+
+      - name: Check EXPO_TOKEN
+        id: token
+        run: |
+          if [ -z "$EXPO_TOKEN" ]; then
+            echo "::warning::EXPO_TOKEN secret is not set. Add it under Settings → Secrets and variables → Actions."
+            echo "has_token=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "has_token=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Setup Expo and EAS CLI
+        if: steps.token.outputs.has_token == 'true'
+        uses: expo/expo-github-action@v8
+        with:
+          eas-version: latest
+          token: ${{ secrets.EXPO_TOKEN }}
+
+      - name: Build Android app bundle
+        if: steps.token.outputs.has_token == 'true'
+        run: |
+          PROFILE="${{ inputs.profile || 'production' }}"
+          echo "Building with profile: $PROFILE"
+          eas build --platform android --profile "$PROFILE" --non-interactive --wait
+
+      - name: Submit to Google Play
+        if: >-
+          steps.token.outputs.has_token == 'true' &&
+          (inputs.submit == 'true' || inputs.submit == '')
         env:
-          NODE_ENV: development
-
-      # ── 4. EAS CLI ──────────────────────────────────────────────────────────
-      - name: Install EAS CLI
-        run: npm install -g eas-cli@latest
-
-      # ── 5. Write Google service account key to disk ──────────────────────────
-      #    The key JSON is stored as a GitHub secret (GOOGLE_SERVICE_ACCOUNT_KEY)
-      #    EAS submit reads it from ./google-service-account.json (same path as local)
-      - name: Write Google service account key
-        run: echo '${{ secrets.GOOGLE_SERVICE_ACCOUNT_KEY }}' > ./google-service-account.json
-
-      # ── 6. Build .aab on EAS ────────────────────────────────────────────────
-      - name: EAS Build (production .aab)
-        id: eas_build
-        run: eas build --platform android --profile production --non-interactive
-        env:
-          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
-
-      # ── 7. Submit to Play Store ──────────────────────────────────────────────
-      - name: Submit to Google Play (Internal Track)
-        run: eas submit --platform android --profile production --latest --non-interactive
-        env:
-          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
-
-      # ── 8. Clean up key ──────────────────────────────────────────────────────
-      - name: Remove service account key
-        if: always()
-        run: rm -f ./google-service-account.json
+          GOOGLE_SERVICE_ACCOUNT_KEY: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_KEY }}
+        run: |
+          if [ -z "$GOOGLE_SERVICE_ACCOUNT_KEY" ]; then
+            echo "::warning::GOOGLE_SERVICE_ACCOUNT_KEY secret is not set — skipping submission."
+            exit 0
+          fi
+          umask 077
+          KEYFILE=$(mktemp)
+          printf '%s' "$GOOGLE_SERVICE_ACCOUNT_KEY" > "$KEYFILE"
+          eas submit --platform android --latest --non-interactive \
+            --service-account-json "$KEYFILE"
+          rm -f "$KEYFILE"

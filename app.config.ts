@@ -8,11 +8,13 @@ const BUNDLE_ID = "com.icecreamman.app";
 const VERSION = "1.0.22";
 const VERSION_CODE = 23; // Increment this by 1 for every Play Store upload
 const DEEP_LINK_SCHEME = "icecreamman";
+const EXPO_OWNER = "mgfromthe503";
 // ─────────────────────────────────────────────────────────────────────────────
 
 const config: ExpoConfig = {
   name: APP_NAME,
   slug: APP_SLUG,
+  owner: EXPO_OWNER,
   version: VERSION,
   orientation: "portrait",
   icon: "./assets/images/icon.png",
@@ -105,10 +107,8 @@ const config: ExpoConfig = {
         android: {
           buildArchs: ["armeabi-v7a", "arm64-v8a"],
           minSdkVersion: 24,
-          compileSdkVersion: 36,
-          targetSdkVersion: 36,
-          buildToolsVersion: "36.0.0",
-          kotlinVersion: "2.1.20",
+          compileSdkVersion: 35,
+          targetSdkVersion: 35,
           enableMinifyInReleaseBuilds: true,
           enableShrinkResourcesInReleaseBuilds: true,
           extraProguardRules: `
