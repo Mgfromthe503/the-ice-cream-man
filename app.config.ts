@@ -5,8 +5,8 @@ import type { ExpoConfig } from "expo/config";
 const APP_NAME = "The Ice Cream Man";
 const APP_SLUG = "the-ice-cream-man";
 const BUNDLE_ID = "com.icecreamman.app";
-const VERSION = "1.0.22";
-const VERSION_CODE = 23; // Increment this by 1 for every Play Store upload
+const VERSION = "1.0.20";
+const VERSION_CODE = 10020; // Increment this by 1 for every Play Store upload
 const DEEP_LINK_SCHEME = "icecreamman";
 // ─────────────────────────────────────────────────────────────────────────────
 

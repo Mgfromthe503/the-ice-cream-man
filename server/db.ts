@@ -94,6 +94,20 @@ export async function createRequest(data: InsertIceCreamRequest) {
 }
 
 /**
+ * Get a single request by ID
+ */
+export async function getRequestById(requestId: number) {
+  const db = await getDb();
+  if (!db) return null;
+  const results = await db
+    .select()
+    .from(iceCreamRequests)
+    .where(eq(iceCreamRequests.id, requestId))
+    .limit(1);
+  return results[0] || null;
+}
+
+/**
  * Get all waiting requests (for drivers to see)
  */
 export async function getWaitingRequests() {

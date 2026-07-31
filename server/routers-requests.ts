@@ -92,6 +92,42 @@ export const requestsRouter = router({
     }),
 
   /**
+   * Get active driver location for customer (proximity tracking)
+   * Called by: Customer (polling every 5s during active delivery)
+   * Returns driver's current lat/lng so customer can see distance
+   */
+  getDriverLocation: protectedProcedure
+    .input(z.object({ requestId: z.number() }))
+    .query(async ({ input }) => {
+      const request = await db.getRequestById(input.requestId);
+      if (!request || !request.driverId) {
+        return { latitude: null, longitude: null, distance: null };
+      }
+      const profile = await db.getDriverProfile(request.driverId);
+      if (!profile || !profile.currentLatitude || !profile.currentLongitude) {
+        return { latitude: null, longitude: null, distance: null };
+      }
+      // Calculate distance between driver and customer
+      const R = 6371000; // Earth radius in meters
+      const dLat = ((request.latitude - profile.currentLatitude) * Math.PI) / 180;
+      const dLon = ((request.longitude - profile.currentLongitude) * Math.PI) / 180;
+      const a =
+        Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+        Math.cos((profile.currentLatitude * Math.PI) / 180) *
+          Math.cos((request.latitude * Math.PI) / 180) *
+          Math.sin(dLon / 2) *
+          Math.sin(dLon / 2);
+      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+      const distanceMeters = R * c;
+      return {
+        latitude: profile.currentLatitude,
+        longitude: profile.currentLongitude,
+        distance: distanceMeters,
+        isWithinProximity: distanceMeters <= 304.8, // 1000 feet
+      };
+    }),
+
+  /**
    * Cancel a request
    * Called by: Customer or Driver
    */
