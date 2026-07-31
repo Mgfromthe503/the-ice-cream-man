@@ -1,0 +1,67 @@
+name: 🍦 Build & Deploy to Play Store
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:       # trigger manually from GitHub UI anytime
+
+concurrency:
+  group: production-build
+  cancel-in-progress: false  # never cancel a running build mid-way
+
+jobs:
+  build-and-submit:
+    name: EAS Build + Submit to Play Store
+    runs-on: ubuntu-latest
+
+    steps:
+
+      # ── 1. Checkout ─────────────────────────────────────────────────────────
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # ── 2. Node + pnpm ──────────────────────────────────────────────────────
+      - name: Setup Node 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9.12.0
+
+      # ── 3. Install dependencies ─────────────────────────────────────────────
+      - name: Install dependencies
+        run: pnpm install --no-frozen-lockfile
+        env:
+          NODE_ENV: development
+
+      # ── 4. EAS CLI ──────────────────────────────────────────────────────────
+      - name: Install EAS CLI
+        run: npm install -g eas-cli@latest
+
+      # ── 5. Write Google service account key to disk ──────────────────────────
+      #    The key JSON is stored as a GitHub secret (GOOGLE_SERVICE_ACCOUNT_KEY)
+      #    EAS submit reads it from ./google-service-account.json (same path as local)
+      - name: Write Google service account key
+        run: echo '${{ secrets.GOOGLE_SERVICE_ACCOUNT_KEY }}' > ./google-service-account.json
+
+      # ── 6. Build .aab on EAS ────────────────────────────────────────────────
+      - name: EAS Build (production .aab)
+        id: eas_build
+        run: eas build --platform android --profile production --non-interactive
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+
+      # ── 7. Submit to Play Store ──────────────────────────────────────────────
+      - name: Submit to Google Play (Internal Track)
+        run: eas submit --platform android --profile production --latest --non-interactive
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+
+      # ── 8. Clean up key ──────────────────────────────────────────────────────
+      - name: Remove service account key
+        if: always()
+        run: rm -f ./google-service-account.json

@@ -4,6 +4,46 @@
 
 A mobile app that connects ice cream truck drivers with customers in real-time. Customers tap a button to summon the nearest ice cream truck, and drivers receive instant requests with navigation to the customer's location.
 
+## 📦 Monorepo Structure
+
+This repository is now organized as a **pnpm workspace monorepo**:
+
+```
+.
+├── app/                  # Main Ice Cream Man application
+│   ├── components/
+│   ├── server/          # Express + tRPC backend
+│   ├── lib/
+│   ├── package.json     # App-specific dependencies
+│   └── scripts/
+├── packages/            # Placeholder for shared libraries (future)
+├── package.json         # Workspace root config
+└── .github/workflows/   # CI/CD pipelines
+```
+
+### Quick Start (Monorepo)
+
+```bash
+# Install all dependencies (including app)
+pnpm install
+
+# Start app dev server
+pnpm dev
+
+# Run tests across monorepo
+pnpm test
+
+# Lint and format all packages
+pnpm lint
+pnpm format
+```
+
+For app-specific commands, see `app/README.md` or run:
+```bash
+pnpm --filter app dev
+pnpm --filter app build
+```
+
 ---
 
 ## 📱 Features

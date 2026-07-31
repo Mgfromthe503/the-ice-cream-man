@@ -33,14 +33,21 @@ yarn-error.*
 # local env files
 .env*.local
 
+# Google service account key — NEVER commit this
+jasonkey.json
+google-service-account.json
+*service-account*.json
+
 # typescript
 *.tsbuildinfo
 
 app-example
 
-# generated native folders
+# generated native folders — EAS Build regenerates these
 /ios
 /android
+/app/android
+/app/ios
 
 # IDE
 .vscode/
@@ -56,7 +63,8 @@ logs
 # OS
 Thumbs.db
 
-# Build files
+# mapping.txt intentionally NOT ignored — EAS Build needs it for Play Console deobfuscation
+# mapping.txt
 *.tgz
 *.tar.gz
 .cache/
@@ -64,3 +72,4 @@ Thumbs.db
 # Webdev artifacts (checkpoint zips, migrations, etc.)
 .webdev/
 .project-config.json
+android/
