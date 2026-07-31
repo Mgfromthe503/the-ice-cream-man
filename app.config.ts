@@ -5,8 +5,8 @@ import type { ExpoConfig } from "expo/config";
 const APP_NAME = "The Ice Cream Man";
 const APP_SLUG = "the-ice-cream-man";
 const BUNDLE_ID = "com.icecreamman.app";
-const VERSION = "1.0.20";
-const VERSION_CODE = 10020; // Increment this by 1 for every Play Store upload
+const VERSION = "1.0.21";
+const VERSION_CODE = 10021; // Increment this by 1 for every Play Store upload
 const DEEP_LINK_SCHEME = "icecreamman";
 // ─────────────────────────────────────────────────────────────────────────────
 
@@ -70,7 +70,7 @@ const config: ExpoConfig = {
     "expo-web-browser",
     // Google Play Billing (vendor registration). Requires a dev client / EAS build.
     "expo-iap",
-    // Custom plugin: injects BillingClient 7.0.0 dependency + ProGuard rules
+    // Custom plugin: injects BillingClient 9.1.0 dependency + ProGuard rules
     "./plugins/withBillingClient",
     [
       "expo-location",
@@ -108,15 +108,15 @@ const config: ExpoConfig = {
         android: {
           buildArchs: ["armeabi-v7a", "arm64-v8a"],
           minSdkVersion: 24,
-          compileSdkVersion: 36,
-          targetSdkVersion: 36,
-          buildToolsVersion: "36.0.0",
-          kotlinVersion: "2.1.20",
+          compileSdkVersion: 35,
+          targetSdkVersion: 35,
+          buildToolsVersion: "35.0.0",
+          kotlinVersion: "2.0.21",
           enableProguardInReleaseBuilds: true,
           enableMinifyInReleaseBuilds: true,
           enableShrinkResourcesInReleaseBuilds: true,
-          // Google Play Billing Library version 7.0.0
-          billingLibraryVersion: "7.0.0",
+          // Google Play Billing Library version 9.1.0
+          billingLibraryVersion: "9.1.0",
           extraProguardRules: `
 -keepattributes *Annotation*,Signature,InnerClasses,EnclosingMethod
 -keepclasseswithmembernames class * { native <methods>; }

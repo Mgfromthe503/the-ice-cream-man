@@ -8,7 +8,9 @@
     "development": {
       "developmentClient": true,
       "distribution": "internal",
-      "android": { "buildType": "apk" },
+      "android": {
+        "buildType": "apk"
+      },
       "env": {
         "COREPACK_ENABLE_DOWNLOAD_PROMPT": "0",
         "EAS_SKIP_AUTO_FINGERPRINT": "1"
@@ -16,18 +18,23 @@
     },
     "preview": {
       "distribution": "internal",
-      "android": { "buildType": "apk" },
+      "android": {
+        "buildType": "apk"
+      },
       "env": {
         "COREPACK_ENABLE_DOWNLOAD_PROMPT": "0",
         "EAS_SKIP_AUTO_FINGERPRINT": "1"
       }
     },
     "production": {
-      "android": { "buildType": "app-bundle" },
+      "android": {
+        "buildType": "app-bundle"
+      },
       "env": {
         "NODE_ENV": "production",
         "COREPACK_ENABLE_DOWNLOAD_PROMPT": "0",
-        "EAS_SKIP_AUTO_FINGERPRINT": "1"
+        "EAS_SKIP_AUTO_FINGERPRINT": "1",
+        "EAS_BUILD_NO_EXPO_GO_WARNING": "true"
       }
     }
   },
