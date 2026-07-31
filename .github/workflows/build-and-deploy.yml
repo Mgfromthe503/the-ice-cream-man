@@ -1,4 +1,4 @@
-name: "Build & Deploy to Play Store"
+name: Build and Deploy to Play Store
 
 on:
   push:
@@ -38,19 +38,19 @@ jobs:
         run: npm install -g eas-cli@latest
 
       - name: Write Google service account key
-        if: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_KEY != '' }}
+        if: "${{ secrets.GOOGLE_SERVICE_ACCOUNT_KEY != '' }}"
         run: echo '${{ secrets.GOOGLE_SERVICE_ACCOUNT_KEY }}' > ./google-service-account.json
 
       - name: EAS Build (production .aab)
         run: eas build --platform android --profile production --non-interactive
         env:
           EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
-          EAS_NO_VCS: 1
-          EAS_SKIP_AUTO_FINGERPRINT: 1
+          EAS_NO_VCS: "1"
+          EAS_SKIP_AUTO_FINGERPRINT: "1"
           COREPACK_ENABLE_DOWNLOAD_PROMPT: "0"
 
       - name: Submit to Google Play (Internal Track)
-        if: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_KEY != '' }}
+        if: "${{ secrets.GOOGLE_SERVICE_ACCOUNT_KEY != '' }}"
         run: eas submit --platform android --profile production --latest --non-interactive
         env:
           EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
