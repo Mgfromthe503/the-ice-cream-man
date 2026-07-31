@@ -1,30 +1,50 @@
 {
   "cli": {
-    "version": ">= 5.0.0",
-    "promptToConfigurePushNotifications": false,
-    "packageManager": "npm"
+    "version": ">= 16.0.0",
+    "appVersionSource": "remote",
+    "promptToConfigurePushNotifications": false
   },
   "build": {
-    "development": {
-      "developmentClient": true,
-      "distribution": "internal"
+    "base": {
+      "node": "22.14.0",
+      "pnpm": "9.12.0",
+      "env": {
+        "EAS_BUILD_NO_EXPO_GO_WARNING": "1"
+      }
     },
-    "preview": {
+    "development": {
+      "extends": "base",
+      "developmentClient": true,
       "distribution": "internal",
       "android": {
-        "buildType": "apk"
+        "buildType": "apk",
+        "gradleCommand": ":app:assembleDebug"
+      }
+    },
+    "preview": {
+      "extends": "base",
+      "distribution": "internal",
+      "android": {
+        "buildType": "apk",
+        "resourceClass": "medium"
       }
     },
     "production": {
+      "extends": "base",
+      "distribution": "store",
       "android": {
         "buildType": "app-bundle",
-        "gradleCommand": ":app:bundleRelease",
-        "enableProguard": true,
-        "withoutCredentials": false,
-        "env": {
-          "GRADLE_OPTS": "-Dorg.gradle.jvmargs='-Xmx2048m'"
-        },
-        "extraBuildGradle": "dependencies {\n  implementation 'com.android.billingclient:billing:9.1.0'\n}\n\nandroid {\n  buildTypes {\n    release {\n      minifyEnabled true\n      shrinkResources true\n      proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'\n    }\n  }\n}\n\nafterbuild {\n  doLast {\n    def mappingFile = file('build/outputs/mapping/release/mapping.txt')\n    def bundleDir = file('build/outputs/bundle/release')\n    if (mappingFile.exists() && bundleDir.exists()) {\n      copy {\n        from mappingFile\n        into bundleDir\n        rename 'mapping.txt', 'mapping.txt'\n      }\n    }\n  }\n}\n\nbundleRelease.finalizedBy afterbuild"
+        "autoIncrement": true,
+        "resourceClass": "medium"
+      }
+    },
+    "production-apk": {
+      "extends": "base",
+      "distribution": "internal",
+      "android": {
+        "buildType": "apk",
+        "autoIncrement": true,
+        "resourceClass": "medium"
       }
     }
   },
@@ -32,7 +52,8 @@
     "production": {
       "android": {
         "track": "internal",
-        "releaseStatus": "draft"
+        "releaseStatus": "draft",
+        "changesNotSentForReview": false
       }
     }
   }

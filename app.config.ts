@@ -41,7 +41,7 @@ const env = {
 const config: ExpoConfig = {
   name: env.appName,
   slug: env.appSlug,
-  version: "1.0.19",
+  version: "1.0.20",
   orientation: "portrait",
   icon: "./assets/images/icon.png",
   scheme: env.scheme,
@@ -131,28 +131,26 @@ const config: ExpoConfig = {
         },
       },
     ],
+    // Google Play Billing (vendor registration). Requires a dev client / EAS build.
+    "expo-iap",
+    // Custom plugin: injects BillingClient 7.0.0 dependency + ProGuard rules
+    "./plugins/withBillingClient",
     [
       "expo-build-properties",
       {
         android: {
+          // Google Play Billing Library 7.0.0 (via expo-iap) needs Kotlin 2.x.
+          kotlinVersion: "2.1.20",
           buildArchs: ["armeabi-v7a", "arm64-v8a"],
           minSdkVersion: 24,
-          enableProguard: true,
-          extraBuildGradle: "dependencies {\n  implementation 'com.android.billingclient:billing:9.1.0'\n}",
-          extraGradleProperties: [
-            "android.useAndroidX=true",
-            "android.enableJetifier=true",
-            "org.gradle.jvmargs=-Xmx2048m",
-            "android.enableR8=true",
-            "android.enableR8.fullMode=false"
-          ],
-          modifyGradleProperties: (props) => {
-            props.set("android.enableR8", "true");
-            props.set("android.minifyEnabled", "true");
-            props.set("android.shrinkResources", "true");
-            return props;
-          },
-        }
+          // Enable R8 minification and resource shrinking for Google Play compliance
+          enableProguardInReleaseBuilds: true,
+          enableShrinkResourcesInReleaseBuilds: true,
+          // Enable minification (R8) for release builds
+          enableMinifyInReleaseBuilds: true,
+          // Google Play Billing Library version 7.0.0
+          billingLibraryVersion: "7.0.0",
+        },
       },
     ],
   ],
