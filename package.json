@@ -13,19 +13,7 @@
     "format": "pnpm -w -r format"
   },
   "dependencies": {
-    "expo-iap": "^5.0.0",
-    "expo-insights": "~0.10.8"
+    "expo-iap": "^5.0.0"
   },
-  "pnpm": {
-    "overrides": {
-      "esbuild@<=0.24.2": ">=0.25.0",
-      "@trpc/server@>=11.0.0 <11.8.0": ">=11.8.0",
-      "vite@<=6.4.1": ">=6.4.2",
-      "drizzle-orm@<0.45.2": ">=0.45.2",
-      "postcss@<8.5.10": ">=8.5.10",
-      "uuid@<11.1.1": ">=11.1.1",
-      "vitest@<3.2.6": ">=3.2.6",
-      "vite@<=6.4.2": ">=6.4.3"
-    }
-  }
+  "pnpm": {}
 }
